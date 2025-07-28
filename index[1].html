@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Регистрация</title>
+
+  <!-- intl-tel-input стили -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css"/>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #1e90ff, #ffffff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
+
+    .logo {
+      width: 150px;
+      height: auto;
+      margin-bottom: 30px;
+      border-radius: 20px;
+      animation: fadeInZoom 1.2s ease-in-out;
+    }
+
+    @keyframes fadeInZoom {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #1e90ff;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+      background: #1e90ff;
+      color: white;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button[type="submit"]:hover {
+      background: #187bcd;
+    }
+
+    .success-message {
+      font-size: 22px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="form-container">
+    <img class="logo" src="https://i.postimg.cc/3x8MVBCw/cf82e67a-cbec-4bb6-9c4f-fee16925a706.jpg" alt="Логотип" />
+
+    <div id="success" style="display: none;" class="success-message">Вы успешно зарегистрировались</div>
+
+    <form id="register-form">
+      <input type="text" id="fio" placeholder="Ф.И.О." required />
+
+      <!-- Телефонный ввод с флагами -->
+      <input type="tel" id="phone" placeholder="Номер телефона" required />
+
+      <input type="text" id="address" placeholder="Адрес дома" required />
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+  </div>
+
+  <!-- intl-tel-input скрипты -->
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"></script>
+
+  <script>
+    // Проверка на регистрацию
+    if (localStorage.getItem("registered") === "true") {
+      document.getElementById("register-form").style.display = "none";
+      document.getElementById("success").style.display = "block";
+    }
+
+    // Обработка формы
+    document.getElementById("register-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      localStorage.setItem("registered", "true");
+      document.getElementById("register-form").style.display = "none";
+      document.getElementById("success").style.display = "block";
+    });
+
+    // Инициализация intl-tel-input
+    const input = document.querySelector("#phone");
+    const iti = window.intlTelInput(input, {
+      initialCountry: "auto",
+      geoIpLookup: callback => {
+        fetch("https://ipapi.co/json")
+          .then(res => res.json())
+          .then(data => callback(data.country_code))
+          .catch(() => callback("kg"));
+      },
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js"
+    });
+  </script>
+</body>
+</html>
